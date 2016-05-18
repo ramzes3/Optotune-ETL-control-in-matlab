@@ -34,10 +34,10 @@ classdef Optotune < handle
             end
         end
         
-        function lens = Connect(lens)
+        function lens = Open(lens)
             %% Setting up initial parameters for the com port
             lens.etl_port = serial(lens.port);
-            lens.etl_port.Baudrate=9600;
+            lens.etl_port.Baudrate=115200;
             lens.etl_port.StopBits=1;
             lens.etl_port.Parity='none';
             
@@ -49,7 +49,9 @@ classdef Optotune < handle
             lens.last_time_laps = checkStatus(lens); 
             %lens.etl_port.BytesAvailable;  %%% checking number of bytes in the response
             fscanf(lens.etl_port);  %%% reading out the response which should read "Ready"
-            
+            if lens.etl_port.BytesAvailable
+                fread(lens.etl_port,lens.etl_port.BytesAvailable);
+            end
             lens = lens.getUpperLimitA();
         end
         
