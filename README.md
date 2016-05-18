@@ -6,5 +6,5 @@ The repository consists of
   
   Optotune.m - main control class,
   
-  append_crc.m  - calculates and appends checksum
+  append_crc.m  - calculates and appends checksum.
 
