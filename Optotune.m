@@ -19,6 +19,7 @@ classdef Optotune < handle
         min_current = 0; % in mAmpers
         calibration = 1;  % in mAmpers/micrometer
         
+        analogInput = 0;
         max_bin = 0;
         time_pause = 0.3;
         time_laps = 0.01;
@@ -120,6 +121,23 @@ classdef Optotune < handle
             lens.max_current = lens.response(4)*(hex2dec('ff')+1) + lens.response(5);  %% software current limit usually 292.84 mA;
             lens.max_current = lens.max_current / 100; %% reads current in mili ampers 
         end
+        
+        function lens = analogControl(lens)
+            command = append_crc('LA'-0);
+            fwrite(lens.etl_port, command);
+            lens.last_time_laps = checkStatus(lens);    
+            lens.response = fread(lens.etl_port,lens.etl_port.BytesAvailable);
+        end
+        
+        function lens = getAnalogInput(lens)
+            command = append_crc('GAA'-0);
+            fwrite(lens.etl_port, command);
+            lens.last_time_laps = checkStatus(lens);    
+            lens.response = fread(lens.etl_port,lens.etl_port.BytesAvailable);
+            lens.analogInput = lens.response(4)*(hex2dec('ff')+1) + lens.response(5);
+            lens.analogInput
+        end
+            
         
         function lens = Close(lens)
             %%  Closing the port when finished using it %%%%%%%%%%%%
