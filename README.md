@@ -8,3 +8,6 @@ The repository consists of
   
   append_crc.m  - calculates and appends checksum.
 
+  lens driver V4...excel - consists the command library. 
+
+  Optotune lens driver 4 manual.pdf
