@@ -73,7 +73,7 @@ classdef Optotune < handle
             lens.getModeFrequency();
             lens.getModeLowerCurrent();
             lens.getModeUpperCurrent();
-            lens.getTemperature();
+            lens
 
         end
         
