@@ -109,6 +109,17 @@ classdef Optotune < handle
             %pause(lens.time_pause);
         end
         
+
+        function setFocalPower(lens, fi) %% Set focal power in diopters via fi variable
+            %% Set Focal Power %%%%%%%%
+            set_i = int16(fi * 200);
+            LB = uint16(bit2int(bitget(set_i, 8:-1:1)', 8));
+            HB = uint16(bit2int(bitget(set_i, 16:-1:9)', 8));
+            command = append_crc(['PwDA'-0 HB LB 0 0]);
+            fwrite(lens.etl_port, command);
+            %pause(lens.time_pause);
+        end
+
         %% setting temperature limits for operation in focal power mode
         function lens = setTemperatureLimits(lens)
             % The function has not been finished
@@ -151,7 +162,7 @@ classdef Optotune < handle
             lens.last_time_laps = checkStatus(lens);
             lens.response = fread(lens.etl_port,lens.etl_port.BytesAvailable);
             if strcmp(cellstr(char(lens.response(1:3))'), 'MDA')
-                logMessage('Lens set to Current Mode succesfully');
+                disp('Lens set to Current Mode succesfully');
             else
                 checkError(lens);
             end
@@ -163,7 +174,7 @@ classdef Optotune < handle
             lens.last_time_laps = checkStatus(lens);
             lens.response = fread(lens.etl_port,lens.etl_port.BytesAvailable);
             if strcmp(cellstr(char(lens.response(1:3))'), 'MCA')
-                logMessage('Lens set to Focal Power Mode succesfully');
+                disp('Lens set to Focal Power Mode succesfully');
             else
                 checkError(lens);
             end
@@ -175,7 +186,7 @@ classdef Optotune < handle
             lens.last_time_laps = checkStatus(lens);
             lens.response = fread(lens.etl_port,lens.etl_port.BytesAvailable);
             if strcmp(cellstr(char(lens.response(1:3))'), 'MAA')
-                logMessage('Lens set to Analog Mode succesfully');
+                disp('Lens set to Analog Mode succesfully');
             else
                 checkError(lens);
             end
@@ -187,7 +198,7 @@ classdef Optotune < handle
             lens.last_time_laps = checkStatus(lens);
             lens.response = fread(lens.etl_port,lens.etl_port.BytesAvailable);
             if strcmp(cellstr(char(lens.response(1:3))'), 'MSA')
-                logMessage('Lens set to Sinusoidal Signal Mode succesfully');
+                disp('Lens set to Sinusoidal Signal Mode succesfully');
             else
                 checkError(lens);
             end
@@ -202,7 +213,7 @@ classdef Optotune < handle
             lens.last_time_laps = checkStatus(lens);
             lens.response = fread(lens.etl_port,lens.etl_port.BytesAvailable);
             if strcmp(cellstr(char(lens.response(1:3))'), 'MQA')
-                logMessage('Lens set to Rectangular Signal Mode succesfully');
+                disp('Lens set to Rectangular Signal Mode succesfully');
             else
                 checkError(lens);
             end
@@ -217,7 +228,7 @@ classdef Optotune < handle
             lens.last_time_laps = checkStatus(lens);
             lens.response = fread(lens.etl_port,lens.etl_port.BytesAvailable);
             if strcmp(cellstr(char(lens.response(1:3))'), 'MTA')
-                logMessage('Lens set to Triangular Signal Mode succesfully');
+                disp('Lens set to Triangular Signal Mode succesfully');
             else
                 checkError(lens);
             end
@@ -235,19 +246,19 @@ classdef Optotune < handle
             checkError(lens);
             switch lens.response(4)
                 case 1
-                    logMessage('Lens is driven in Current mode');
+                    disp('Lens is driven in Current mode');
                 case 2
-                    logMessage('Lens is driven in Sinusoidal Singal mode');
+                    disp('Lens is driven in Sinusoidal Singal mode');
                 case 3
-                    logMessage('Lens is driven in Triangular mode');
+                    disp('Lens is driven in Triangular mode');
                 case 4
-                    logMessage('Lens is driven in Retangular mode');
+                    disp('Lens is driven in Retangular mode');
                 case 5
-                    logMessage('Lens is driven in FocalPower mode');
+                    disp('Lens is driven in FocalPower mode');
                 case 6
-                    logMessage('Lens is driven in Analog mode');
+                    disp('Lens is driven in Analog mode');
                 case 7
-                    logMessage('Lens is driven in Position Controlled Mode');
+                    disp('Lens is driven in Position Controlled Mode');
             end
         end
         
@@ -256,7 +267,7 @@ classdef Optotune < handle
         % set signal generator upper current limit
         function lens = setModeUpperCurrent(lens,ci)
             if ci > lens.max_current || ci < 0
-                logMessage('The current should be between 0 and %.2f mA', lens.max_current);
+                disp('The current should be between 0 and %.2f mA', lens.max_current);
                 ci = lens.max_current;
             else
                 if ci < lens.modeLowerCurrent
@@ -270,7 +281,7 @@ classdef Optotune < handle
             fwrite(lens.etl_port, command);
             checkError(lens);
             if lens.error == true
-                logMessage('Error occurred when setting modeUpperCurrent');
+                disp('Error occurred when setting modeUpperCurrent');
             end
             
 
@@ -289,7 +300,7 @@ classdef Optotune < handle
             else
                 checkError(lens);
                 if lens.error == true
-                    logMessage('Error occurred when getting modeUpperCurrent');
+                    disp('Error occurred when getting modeUpperCurrent');
                 end
             end
         end
@@ -297,7 +308,7 @@ classdef Optotune < handle
         % set signal generator lower current limit
         function lens = setModeLowerCurrent(lens,ci)
             if ci > lens.max_current || ci < 0
-                logMessage('The current should be between 0 and %.2f mA', lens.max_current);
+                disp('The current should be between 0 and %.2f mA', lens.max_current);
                 ci = 0;
             else
                 if ci > lens.modeUpperCurrent
@@ -311,7 +322,7 @@ classdef Optotune < handle
             fwrite(lens.etl_port, command);
             checkError(lens);
             if lens.error == true
-                logMessage('Error occurred when setting modeLowerCurrent');
+                disp('Error occurred when setting modeLowerCurrent');
             end
                        
             getModeLowerCurrent(lens);
@@ -328,7 +339,7 @@ classdef Optotune < handle
             else
                 checkError(lens);
                 if lens.error == true
-                    logMessage('Error occurred when getting modeLowerCurrent');
+                    disp('Error occurred when getting modeLowerCurrent');
                 end
             end
         end
@@ -336,7 +347,7 @@ classdef Optotune < handle
         % set signal generator lower current limit
         function lens = setModeFrequency(lens,ci)
             if ci < 0.1
-                logMessage('The minimum frequency is 0.1 Hz!');
+                disp('The minimum frequency is 0.1 Hz!');
                 ci = 0.1;
             end
             set_i = ci*1000;
@@ -348,7 +359,7 @@ classdef Optotune < handle
             fwrite(lens.etl_port, command);
             checkError(lens);
             if lens.error == true
-                logMessage('Error occurred when setting modeFrequency');
+                disp('Error occurred when setting modeFrequency');
             end
             
             getModeFrequency(lens);
@@ -365,7 +376,7 @@ classdef Optotune < handle
             else
                 checkError(lens);
                 if lens.error == true
-                    logMessage('Error occurred when getting modeFrequency');
+                    disp('Error occurred when getting modeFrequency');
                 end
             end
         end
@@ -417,13 +428,13 @@ classdef Optotune < handle
             if char(lens.response(1)) == 'E'
                 switch lens.response(2)
                     case 1
-                        logMessage('CRC failed.');
+                        disp('CRC failed.');
                     case 2
-                        logMessage('Command not available in firmware type.');
+                        disp('Command not available in firmware type.');
                     case 3
-                        logMessage('Command not regongnized.');
+                        disp('Command not regongnized.');
                     case 4
-                        logMessage('Lens is not compatible with firmware.');
+                        disp('Lens is not compatible with firmware.');
                         
                 end
                 lens.error = true;
